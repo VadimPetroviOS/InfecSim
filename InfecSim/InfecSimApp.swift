@@ -11,7 +11,9 @@ import SwiftUI
 struct InfecSimApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(
+                peopleCount: 100
+            )
         }
     }
 }
