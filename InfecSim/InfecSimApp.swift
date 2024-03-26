@@ -12,8 +12,7 @@ struct InfecSimApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
-                peopleCount: 100,
-                widthPeopleCount: Int(UIScreen.main.bounds.width)/50 - 1
+                peopleCount: 100
             )
         }
     }

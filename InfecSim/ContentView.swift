@@ -7,69 +7,98 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ContentView<ViewModel: ContentViewModelProtocol>: View {
+    @StateObject
+    private var viewModel: ViewModel
     
-    var peopleCount: Int
-    var widthPeopleCount: Int
-    var heightPeopleCount: Int
-    var remainderPeopleCount: Int
+    @State private var diametr: Double = 50.0
     
-    init(peopleCount: Int, widthPeopleCount: Int) {
-        self.peopleCount = peopleCount
-        self.widthPeopleCount = widthPeopleCount
-        self.heightPeopleCount = peopleCount / widthPeopleCount
-        self.remainderPeopleCount = peopleCount % widthPeopleCount
+    // MARK: - Initializing View
+
+    init(peopleCount: Int) where ViewModel == ContentViewModel {
+        _viewModel = StateObject(
+            wrappedValue: ContentViewModel(peopleCount: peopleCount
+            )
+        )
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            
-            VStack(spacing: 20) {
+        VStack {
+            HStack {
+                Button(action: {
+                    // Переход на 1 экран
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.headline)
+                        .foregroundColor(.black)
+                        .frame(width: 50, height: 50)
+                        .background {
+                            Circle()
+                                .foregroundColor(.white)
+                        }
+                        .shadow(radius: 10)
+                        .padding()
+                }
+                Spacer()
+                Slider(value: $diametr, in: 20.0...100.0, step: 10.0)
+                    .padding()
+            }
+            ScrollView(.vertical, showsIndicators: false) {
                 
-                ForEach(0 ..< heightPeopleCount, id:\.self
-                ) { index in
+                VStack(spacing: 20) {
                     
-                    HStack {
-                        ForEach(index ..< index + widthPeopleCount, id:\.self) { i in
-                            HStack {
-                                Button(action: {
-                                    // Действие при нажатии на кнопку
-                                }) {
-                                    Image(systemName: "\(String(describing: index)).circle")
-                                        .frame(width: 50, height: 50)
-                                        .overlay(Circle())
+                    ForEach(0 ..< viewModel.setNumberCirclesHeight(diametr), id:\.self
+                    ) { index in
+                        
+                        HStack {
+                            ForEach(index ..< index + viewModel.setNumberCirclesWide(diametr), id:\.self) { i in
+                                HStack {
+                                    Button(action: {
+                                        // Действие при нажатии на кнопку
+                                    }) {
+                                        Image(systemName: "\(String(describing: index)).circle")
+                                            .frame(width: diametr, height: diametr)
+                                            .overlay(Circle())
+                                    }
+                                    //                        .buttonStyle(PlainButtonStyle())
                                 }
-        //                        .buttonStyle(PlainButtonStyle())
                             }
                         }
-                    }
-                    
-                    
-                }
-                HStack() {
-                    ForEach(0 ..< remainderPeopleCount, id:\.self
-                    ) { i in
-                        Button(action: {
-                            // Действие при нажатии на кнопку
-                        }) {
-                            Image(systemName: "\(String(describing: index)).circle")
-                                .frame(width: 50, height: 50)
-                                .overlay(Circle())
-                        }
-//                        .buttonStyle(PlainButtonStyle())
+                        
+                        
                     }
                 }
-                .padding(.bottom)
             }
-            }
-            }
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(
-            peopleCount: 100,
-            widthPeopleCount: Int(UIScreen.main.bounds.width)/50 - 1
+            peopleCount: 100
         )
     }
 }
+
+// диаметр 50
+// количество кругов 6
+
+// изменение диаметра, приводит к уменьшению размеров кругов
+// их количество растет или уменьшается в зависимоти от
+
+// диаметр 50
+// кругов 6
+// димаетр 100
+// кругов 3
+// диаметр 25
+// кругов 12
+
+// diametr = 50
+// количество кругов = ширина экрана делить на diametr - 1
+// количество столбцов определяется = кол-во людей делить нацело на количество кругов
+// и после идет прорисовка
+
+//V слайдер должен изменять значение диаметра
+// теперь нам нужны три параметра это диаметр
+// идет пересчет количество кругов в строке и столбце
