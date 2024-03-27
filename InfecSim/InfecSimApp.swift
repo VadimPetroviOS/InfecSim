@@ -12,7 +12,9 @@ struct InfecSimApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(
-                peopleCount: 100
+                peopleCount: 100,
+                infectionFactor: 1,
+                T: 3
             )
         }
     }
