@@ -13,7 +13,7 @@ struct ContentView<ViewModel: ContentViewModelProtocol>: View {
     
     // MARK: - Initializing View
 
-    init(peopleCount: Int, infectionFactor: Int, T: Int) where ViewModel == ContentViewModel {
+    init(peopleCount: Int, infectionFactor: Int, T: DispatchTimeInterval) where ViewModel == ContentViewModel {
         _viewModel = StateObject(
             wrappedValue: ContentViewModel(
                 peopleCount: peopleCount,
@@ -57,6 +57,7 @@ struct ContentView<ViewModel: ContentViewModelProtocol>: View {
                                     Button(action: {
                                         viewModel.tupleDictInfectedPeople["\(index)\(i)"] = (index, i)
                                         viewModel.peopleInfection(index, i)
+                                        viewModel.massInfeсtion()
                                     }) {
                                         Image(systemName: "\(String(describing: index)).circle")
                                             .frame(width: viewModel.diameter, height: viewModel.diameter)
@@ -82,7 +83,7 @@ struct ContentView_Previews: PreviewProvider {
         ContentView(
             peopleCount: 100,
             infectionFactor: 1,
-            T: 3
+            T: DispatchTimeInterval.seconds(3)
         )
     }
 }

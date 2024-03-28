@@ -14,7 +14,7 @@ struct InfecSimApp: App {
             ContentView(
                 peopleCount: 100,
                 infectionFactor: 1,
-                T: 3
+                T: DispatchTimeInterval.seconds(3)
             )
         }
     }
