@@ -59,14 +59,12 @@ final class ContentViewModel: ContentViewModelProtocol {
 //    }
     
     func peopleInfection(_ row: Int, _ column: Int) {
-        DispatchQueue.global(qos: .userInteractive).async {
-            self.infectedDict["\(row)\(column)"] = true
-            var array = self.arrayPotentiallyInfected(row, column)
-            if self.infectionFactor > 3 && array.count <= 3 {
-                self.infectionProcess(3, &array)
-            } else {
-                self.infectionProcess(self.infectionFactor, &array)
-            }
+        self.infectedDict["\(row)\(column)"] = true
+        var array = self.arrayPotentiallyInfected(row, column)
+        if self.infectionFactor > 3 && array.count <= 3 {
+            self.infectionProcess(3, &array)
+        } else {
+            self.infectionProcess(self.infectionFactor, &array)
         }
     }
     
@@ -156,44 +154,23 @@ final class ContentViewModel: ContentViewModelProtocol {
                     continue
                 }
                 self.infectedDict["\(randomPeople.0)\(randomPeople.1)"] = true
-                DispatchQueue.main.async {
-                    self.tupleDictInfectedPeople["\(randomPeople.0)\(randomPeople.1)"] = (randomPeople.0, randomPeople.1)
-                }
+                self.tupleDictInfectedPeople["\(randomPeople.0)\(randomPeople.1)"] = (randomPeople.0, randomPeople.1)
                 array.remove(at: randomIndex)
                 infectPeopleCount += 1
             }
     }
     
     func massInfeсtion() {
-        DispatchQueue.global(qos: .userInteractive).asyncAfter(deadline: .now() + 3) {
-            for i in self.tupleDictInfectedPeople {
-                DispatchQueue.global(qos: .userInteractive).async {
-                    self.peopleInfection(i.value.0, i.value.1)
+        DispatchQueue.global().async {
+            while true {
+                Thread.sleep(forTimeInterval: 3)
+                DispatchQueue.main.async {
+                    for i in self.tupleDictInfectedPeople {
+                        self.peopleInfection(i.value.0, i.value.1)
+                    }
                 }
             }
-            self.massInfeсtion()
         }
-        
-        
-//        DispatchQueue.global(qos: .userInteractive).async {
-//                var infectedCount = 1
-//                var step = 1
-//
-//                repeat {
-//                    for _ in 0..<step {
-//                        DispatchQueue.global(qos: .userInteractive).async {
-//                            self.peopleInfection(Int.random(in: 0..<self.setNumberCirclesHeight(self.diameter)), Int.random(in: 0..<self.setNumberCirclesWide(self.diameter)))
-//                        }
-//                    }
-//
-//                    infectedCount += step
-//                    step *= 2
-//
-//                    usleep(1000000) // Wait for 1 second between each step
-//
-//                } while infectedCount <= self.peopleCount
-//            }
-        
     }
 }
 
